@@ -680,7 +680,27 @@ with tab1:
              status_container.info("⏳ 卫星正在解析云层结构...")
         
         try:
-            image_obj = Image.open(io.BytesIO(image_bytes))
+            # === 🛡️ 第一道防线：检查文件大小 ===
+            if len(image_bytes) < 100:
+                status_container.empty()
+                st.error("🚫 上传失败：图片数据为空 (0KB)。请尝试重新上传，或换一张照片。")
+                st.stop()
+
+            # === 🛡️ 第二道防线：尝试智能解码 ===
+            try:
+                # 尝试直接打开
+                image_obj = Image.open(io.BytesIO(image_bytes))
+                
+                # 针对“披着JPG皮的WebP/HEIC”进行强制转换
+                if image_obj.format not in ["JPEG", "PNG", "WEBP"]:
+                    image_obj = image_obj.convert("RGB")
+                    
+            except Exception:
+                # 如果标准库打不开，提示用户可能是 HEIC 或特殊格式
+                status_container.empty()
+                st.error("🚫 无法读取此图片格式。")
+                st.info("💡 建议：\n1. 请尝试 **“截图”** 这张照片，然后上传截图（截图兼容性 100%）。\n2. 或在相册里编辑一下保存后再上传。")
+                st.stop()
             client = genai.Client(api_key=api_key)
             
             prompt = """
