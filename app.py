@@ -230,8 +230,8 @@ inject_custom_css()
 # 🔧 3. 后端逻辑
 # ==========================================
 
-os.environ["HTTP_PROXY"] = "http://127.0.0.1:10809"
-os.environ["HTTPS_PROXY"] = "http://127.0.0.1:10809"
+# os.environ["HTTP_PROXY"] = "http://127.0.0.1:10809"
+#os.environ["HTTPS_PROXY"] = "http://127.0.0.1:10809"
 
 def init_db():
     conn = sqlite3.connect('clouds.db')
